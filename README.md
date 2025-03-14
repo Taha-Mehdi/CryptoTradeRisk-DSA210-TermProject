@@ -72,7 +72,7 @@ Social media sentiment from cryptocurrency-related posts.
 | 2025-03-12 10:00:00 UTC | "Market dip, time to panic?"  | -0.38           |
 
 #### Crypto Fear & Greed Index
-Daily market sentiment indicator from [alternative.me](https://alternative.me).  
+Measure daily market sentiment.
 **Variables to Measure:**  
 - **Date:** Recorded daily (e.g., `2025-03-11`).  
 - **Index Value:** Score from `0` (Extreme Fear) to `100` (Extreme Greed) (e.g., `68`).  
@@ -127,7 +127,7 @@ I’ll gather these variables systematically to ensure consistency and reliabili
   - *Frequency:* Daily at `12:00 UTC`, capturing peak activity.
 
 - **Fear & Greed Index:**  
-  - *Method:* Manually copy daily value from [alternative.me](https://alternative.me) into `fear_greed.csv` until an API is sourced.  
+  - *Method:* Manually copy daily values into `fear_greed.csv` until an API is sourced.  
   - *Tools:* Manual entry, potential Python script if automated later.  
   - *Frequency:* Daily at `09:00 UTC`.
 
