@@ -3,8 +3,6 @@
 ## Motivation
 Cryptocurrency markets are characterized by **high volatility**, **sentiment-driven movements**, and **unique opportunities**. As an active trader, I’m motivated to leverage data science to **maximize trading profits** and **stabilize portfolio risk**. This project explores: **How do news sentiment, social media trends, and market volatility metrics influence my trading performance and portfolio stability?** By combining my personal trading and portfolio data with external sentiment and volatility indicators, I aim to uncover actionable insights—such as optimal trading windows or risk-hedging triggers—blending the art of crypto trading with rigorous scientific analysis.
 
----
-
 ## Data Sources
 I’ll collect a comprehensive dataset from **March 11 to May 30, 2025 (81 days)**, integrating personal and external data to quantify trading outcomes, portfolio risk, and their drivers. Below are the specific variables I’ll measure, accompanied by sample tables for clarity:
 
@@ -101,8 +99,6 @@ Daily price movements for BTC and ETH from CoinMarketCap API.
 | 2025-03-11 | $62,400    | $63,100     | $63,500    | $62,200   | 2.08%      |
 | 2025-03-12 | $63,000    | $62,800     | $63,300    | $62,500   | 1.27%      |
 
----
-
 ## Data Collection Plan
 I’ll gather these variables systematically to ensure consistency and reliability:
 
@@ -146,14 +142,10 @@ I’ll gather these variables systematically to ensure consistency and reliabili
   - Verify portfolio values against CoinMarketCap API outputs.  
   - Ensure sentiment sources (news, X) are crypto-specific to avoid noise.
 
----
-
 ## Analysis Plan
 - **By April 18:** Clean data (e.g., remove outliers >$500 profit/loss), calculate sentiment scores, compute portfolio volatility (7-day rolling standard deviation), and explore correlations (e.g., profit vs. sentiment, risk vs. Fear & Greed) with visualizations (scatter plots, heatmaps).  
 - **By May 23:** Build machine learning models (e.g., Random Forest for trade profit prediction, Gradient Boosting for risk forecasting) using Scikit-learn, evaluating with R² and RMSE.  
 - **By May 30:** Present findings (e.g., “Days with Fear & Greed >70 increase portfolio volatility by 1.5%”) in a final report.
-
----
 
 ## Tools
 - **Programming:** Python 3.11 for all scripting and analysis.  
@@ -164,9 +156,27 @@ I’ll gather these variables systematically to ensure consistency and reliabili
   - `NLTK`: Sentiment analysis.  
   - `Scikit-learn`: Machine learning models.  
   - `Matplotlib`/`Seaborn`: Visualizations.  
-- **GitHub:** Version control and submission platform (this repo).
+- **GitHub:** Version control and submission platform (this repo).  
+- **Dependencies:** Listed in `requirements.txt` for reproducibility.
 
----
+## Ethical Considerations
+- **Data Privacy:** Personal trading logs will be anonymized to protect financial information, ensuring no sensitive details (e.g., account numbers) are exposed.
+- **Responsible Data Use:** News and social media data will be scraped responsibly, adhering to website terms of service and citing sources appropriately (e.g., CoinTelegraph, X posts).
+- **AI Tool Transparency:** Any use of AI tools (e.g., LLMs) for coding or analysis will be documented, including prompts and outputs, as per the academic integrity policy.
+
+## Project Structure
+- `/data`: Raw and processed datasets (e.g., trades.csv, processed_data.csv)
+- `/scripts`: Python scripts (e.g., scrape_news.py, pre_processing.py)
+- `/outputs`: Visualizations and intermediate results
+- `/reports`: Final reports and documentation (e.g., Hypothesis Testing Results.pdf)
+- `README.md`: Project proposal and instructions
+- `requirements.txt`: Python dependencies
+
+## Setup and Reproducibility
+1. Clone the repository: `git clone <repo-url>`
+2. Install dependencies: `pip install -r requirements.txt`
+3. Download or generate datasets as described in the Data Collection Plan.
+4. Run scripts in the `/scripts` folder (e.g., `python scrape_news.py`).
 
 ## Notes
 - Data collection begins **March 11**, post-submission, to align with the course timeline.  
