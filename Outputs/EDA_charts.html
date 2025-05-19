@@ -1,0 +1,261 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptocurrency Market Analysis Charts</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .chart-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
+    </style>
+</head>
+<body>
+    <h2>BTC and ETH Closing Prices Over Time</h2>
+    <div class="chart-container">
+        <canvas id="priceChart"></canvas>
+    </div>
+
+    <h2>Sentiment Score Distribution</h2>
+    <div class="chart-container">
+        <canvas id="sentimentChart"></canvas>
+    </div>
+
+    <h2>Trading PnL$ Over Time</h2>
+    <div class="chart-container">
+        <canvas id="pnlChart"></canvas>
+    </div>
+
+    <h2>BTC Daily Return vs. Sentiment Score</h2>
+    <div class="chart-container">
+        <canvas id="returnChart"></canvas>
+    </div>
+
+    <script>
+        // Price Trends Chart
+        const priceCtx = document.getElementById('priceChart').getContext('2d');
+        new Chart(priceCtx, {
+            type: 'line',
+            data: {
+                labels: ["2025-03-11", "2025-03-12", "2025-03-13", "2025-03-14", "2025-03-15", "2025-03-16", "2025-03-17", "2025-03-18", "2025-03-19", "2025-03-20", "2025-03-21", "2025-03-22", "2025-03-23", "2025-03-24", "2025-03-25", "2025-03-26", "2025-03-27", "2025-03-28", "2025-03-29", "2025-03-30", "2025-03-31", "2025-04-01", "2025-04-02", "2025-04-03", "2025-04-04", "2025-04-05", "2025-04-06", "2025-04-07", "2025-04-08", "2025-04-09", "2025-04-10", "2025-04-11", "2025-04-12", "2025-04-13", "2025-04-14", "2025-04-15", "2025-04-16", "2025-04-17", "2025-04-18", "2025-04-19", "2025-04-20", "2025-04-21", "2025-04-22", "2025-04-23", "2025-04-24", "2025-04-25", "2025-04-26", "2025-04-27", "2025-04-28", "2025-04-29", "2025-04-30", "2025-05-01", "2025-05-02", "2025-05-03", "2025-05-04", "2025-05-05", "2025-05-06", "2025-05-07", "2025-05-08", "2025-05-09", "2025-05-10", "2025-05-11", "2025-05-12", "2025-05-13", "2025-05-14", "2025-05-15", "2025-05-16", "2025-05-17", "2025-05-18", "2025-05-19"],
+                datasets: [
+                    {
+                        label: "BTC Close",
+                        data: [82921.1, 83664.3, 81100.2, 83977.1, 84341.3, 82578.4, 84019.1, 82719.1, 86841.0, 84208.1, 84073.3, 83840.5, 86077.4, 87490.0, 87404.0, 86912.0, 87228.2, 84410.4, 82645.7, 82371.6, 82548.8, 85164.2, 82525.0, 83159.4, 83866.7, 83552.1, 78391.3, 79162.5, 76312.5, 82607.0, 79607.5, 83413.1, 85292.7, 83734.4, 84586.4, 83647.0, 84032.2, 84940.0, 84474.6, 85068.1, 85179.0, 87516.0, 93441.9, 93697.7, 93980.3, 94676.9, 94631.4, 93742.5, 94995.0, 94269.8, 94184.4, 96499.3, 96894.4, 95885.8, 94316.9, 94745.2, 96825.4, 97035.1, 103274.3, 102975.1, 104798.0, 104119.2, 102795.0, 104119.2, 103513.9, 103765.4, 103480.5, 103112.6, 106504.5, 103023.3],
+                        borderColor: "#FF6F61",
+                        fill: false
+                    },
+                    {
+                        label: "ETH Close",
+                        data: [1922.28, 1908.22, 1864.69, 1911.62, 1937.17, 1887.65, 1926.35, 1932.61, 2056.62, 1983.57, 1965.58, 1980.8, 2006.02, 2078.73, 2066.19, 2009.59, 2003.67, 1896.69, 1827.84, 1807.02, 1821.95, 1904.99, 1795.59, 1816.53, 1816.36, 1806.47, 1580.65, 1553.01, 1473.4, 1669.74, 1522.13, 1566.77, 1644.12, 1597.77, 1623.73, 1588.8, 1577.14, 1582.73, 1588.93, 1612.58, 1587.28, 1579.59, 1756.11, 1795.07, 1769.53, 1785.96, 1820.65, 1791.42, 1799.24, 1798.47, 1793.58, 1838.32, 1842.06, 1833.93, 1809.05, 1820.34, 1816.6, 1811.2, 2206.13, 2345.27, 2583.78, 2515.22, 2495.73, 2680.05, 2609.68, 2548.16, 2537.04, 2475.04, 2498.97, 2413.56],
+                        borderColor: "#6B7280",
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: "BTC and ETH Closing Prices (March 11 - May 19, 2025)"
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Date"
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: "Price (USD)"
+                        }
+                    }
+                }
+            }
+        });
+
+        // Sentiment Distribution Chart
+        const sentimentCtx = document.getElementById('sentimentChart').getContext('2d');
+        new Chart(sentimentCtx, {
+            type: 'bar',
+            data: {
+                labels: ["Extreme Fear (0)", "Fear (1)", "Neutral (2)", "Greed (3)", "Extreme Greed (4)"],
+                datasets: [
+                    {
+                        label: "Count",
+                        data: [3, 18, 29, 14, 6],
+                        backgroundColor: ["#EF4444", "#F59E0B", "#10B981", "#3B82F6", "#8B5CF6"]
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: "Distribution of Sentiment Scores (March 11 - May 19, 2025)"
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Sentiment Score"
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: "Count"
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Trading PnL$ Chart
+        const pnlCtx = document.getElementById('pnlChart').getContext('2d');
+        new Chart(pnlCtx, {
+            type: 'line',
+            data: {
+                labels: ["2025-03-11", "2025-03-12", "2025-03-13", "2025-03-14", "2025-03-15", "2025-03-16", "2025-03-17", "2025-03-18", "2025-03-19", "2025-03-20", "2025-03-21", "2025-03-22", "2025-03-23", "2025-03-24", "2025-03-25", "2025-03-26", "2025-03-27", "2025-03-28", "2025-03-29", "2025-03-30", "2025-03-31", "2025-04-01", "2025-04-02", "2025-04-03", "2025-04-04", "2025-04-05", "2025-04-06", "2025-04-07", "2025-04-08", "2025-04-09", "2025-04-10", "2025-04-11", "2025-04-12", "2025-04-13", "2025-04-14", "2025-04-15", "2025-04-16", "2025-04-17", "2025-04-18", "2025-04-19", "2025-04-20", "2025-04-21", "2025-04-22", "2025-04-23", "2025-04-24", "2025-04-25", "2025-04-26", "2025-04-27", "2025-04-28", "2025-04-29", "2025-04-30", "2025-05-01", "2025-05-02", "2025-05-03", "2025-05-04", "2025-05-05", "2025-05-06", "2025-05-07", "2025-05-08", "2025-05-09", "2025-05-10", "2025-05-11", "2025-05-12", "2025-05-13", "2025-05-14", "2025-05-15", "2025-05-16", "2025-05-17", "2025-05-18", "2025-05-19"],
+                datasets: [
+                    {
+                        label: "PnL$",
+                        data: [-10.0, 49.5, -10.39, -10.29, 50.95, -10.69, -10.58, 52.35, -10.99, -10.88, 53.85, -11.31, -11.2, 54.45, -11.43, -11.32, -11.21, 55.05, -11.56, -11.44, -11.33, 55.95, -11.67, -11.55, 57.15, -12.0, -11.88, 58.8, -12.35, -12.23, -12.11, 59.95, -12.59, -12.46, -12.34, 60.95, -12.81, -12.68, -12.55, 61.9, -13.0, -12.87, -12.74, 62.85, -13.19, -13.06, -12.93, 63.95, -13.44, -13.3, -13.17, 65.05, -13.66, -13.52, -13.39, 66.15, -13.88, -13.74, -13.61, 67.25, -14.12, -13.98, -13.84, 68.9, -14.46, -14.32, -14.18, 70.05, -14.75, -14.6],
+                        borderColor: "#10B981",
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: "Trading PnL$ Over Time (March 11 - May 19, 2025)"
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Date"
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: "PnL$ (USD)"
+                        }
+                    }
+                }
+            }
+        });
+
+        // BTC Daily Return vs. Sentiment Score Chart
+        const returnCtx = document.getElementById('returnChart').getContext('2d');
+        new Chart(returnCtx, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: "BTC Daily Return vs. Sentiment Score",
+                        data: [
+                            {"x": 4, "y": 5.524836567205027}, {"x": 3, "y": 0.8962736866732315}, {"x": 1, "y": -3.065211493019159}, {"x": 3, "y": 3.5431269920533714}, {"x": 3, "y": 0.4317761527625527}, {"x": 1, "y": -2.0901978034486173}, {"x": 3, "y": 1.742304157286911}, {"x": 2, "y": -1.547267228523038}, {"x": 4, "y": 4.98300876097539}, {"x": 1, "y": -3.032197813713057}, {"x": 1, "y": -0.160790987154527}, {"x": 2, "y": -0.2808153517149906}, {"x": 3, "y": 2.6684096650532765}, {"x": 4, "y": 1.6426162430686266}, {"x": 2, "y": -0.10434846214597002}, {"x": 2, "y": -0.5012032082500508}, {"x": 2, "y": 0.33495519744182234}, {"x": 1, "y": -3.209627391511253}, {"x": 2, "y": -2.092590991101997}, {"x": 1, "y": -0.3329832492002075}, {"x": 1, "y": 0.21049973657185123}, {"x": 2, "y": 3.1685576739036048}, {"x": 3, "y": -3.1010027475753232}, {"x": 2, "y": 0.7716673977795032}, {"x": 2, "y": 0.8495650563610959}, {"x": 2, "y": -0.3861652916209573}, {"x": 1, "y": -6.1496743606934166}, {"x": 0, "y": 0.964077003721618}, {"x": 0, "y": -3.6053037451352616}, {"x": 0, "y": 8.248604746548063}, {"x": 2, "y": -3.6308148965944724}, {"x": 1, "y": 4.782296834036588}, {"x": 2, "y": 2.2442924700762967}, {"x": 2, "y": -1.8152610441767136}, {"x": 2, "y": 0.995310007546006}, {"x": 2, "y": -1.1110480595081063}, {"x": 2, "y": 0.4591855642865662}, {"x": 2, "y": 1.080300170648874}, {"x": 2, "y": -0.5569309116079555}, {"x": 3, "y": 0.7052007519616013}, {"x": 1, "y": 0.12165664615547366}, {"x": 3, "y": 2.743633994294368}, {"x": 4, "y": 6.771218977101324}, {"x": 3, "y": 0.2734310621967377}, {"x": 2, "y": 0.3031069529960094}, {"x": 3, "y": 0.7421839254134417}, {"x": 3, "y": -0.04003409764306774}, {"x": 1, "y": -0.9393288062947333}, {"x": 3, "y": 1.336106888551084}, {"x": 1, "y": -0.7638264589653723}, {"x": 1, "y": -0.08550363337400502}, {"x": 4, "y": 2.461210452605772}, {"x": 2, "y": 0.41151410453970344}, {"x": 1, "y": -1.040824898884661}, {"x": 1, "y": -1.6359094962220628}, {"x": 2, "y": 0.4565570972044532}, {"x": 3, "y": 2.1948179287969194}, {"x": 2, "y": 0.224338681173638}, {"x": 4, "y": 6.429838275015945}, {"x": 3, "y": -0.2862380132990202}, {"x": 4, "y": 1.770629096273165}, {"x": 1, "y": -0.6005825392870393}, {"x": 1, "y": -1.271811539082126}, {"x": 4, "y": 1.288293485377196}, {"x": 1, "y": -0.578583756818105}, {"x": 1, "y": 0.24364042460284976}, {"x": 2, "y": -0.27379279638721277}, {"x": 1, "y": -0.3491701772137596}, {"x": 3, "y": 3.2882084762578137}, {"x": 1, "y": -3.271500558175601}
+                        ],
+                        backgroundColor: "#3B82F6"
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: "BTC Daily Return vs. Sentiment Score (March 11 - May 19, 2025)"
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Sentiment Score"
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: "BTC Daily Return (%)"
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
